@@ -14,9 +14,14 @@
       "layout",
       "responsive",
       "namirial toolbar"
-    ],
+  ],
   "description": "A customizable toolbar implementation",
   "main": "namirial-toolbar.html",
+  "ignore": [
+      "/.*",
+      "/test/",
+      "bower_components"
+  ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
     "app-layout": "PolymerElements/app-layout#^0.10.0",
