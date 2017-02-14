@@ -1,0 +1,170 @@
+<!--
+@license
+Copyright (c) 2017 Namirial Authors. All rights reserved.
+-->
+<!-- Polymer library -->
+<link rel="import" href="../polymer/polymer.html">
+
+<!-- Application elements -->
+<link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
+
+<!-- Iron elements -->
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
+<!-- Paper elements -->
+<link rel="import" href="../paper-icon-button/paper-icon-button-light.html">
+
+<!--
+`namirial-toolbar`
+A customizable toolbar implementation
+
+@demo demo/index.html 
+-->
+<dom-module id="namirial-toolbar">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+        position: relative;        
+      }
+      app-toolbar {
+        background-color: var(--namirial-toolbar-background-color, var(--primary-color, #1976D2));
+        color: var(--namirial-toolbar-color, var(--light-theme-background-color, #fff));
+      }
+      .wrapper {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-center);
+      }
+      .wrapper * {
+        display: inherit;
+        margin: 8px;
+      }
+      .wrapper button[paper-icon-button-light] {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-center);
+        width: 40px;
+        height: 40px;
+      }
+/*      .wrapper ::slotted(img){
+        width: 24px;
+        height: 24px;
+      }
+*/
+      [hidden] {
+        display: none;
+      }
+    </style>
+
+    <app-toolbar id="mainToolbar">
+      <div id="menu-button-wrapper" class="wrapper" hidden$="{{!_shouldShowMenuButton}}">
+        <!-- Menu button -->
+        <button is="paper-icon-button-light" on-tap="_onMenuButtonTap">
+          <slot name="menu-button"></slot>
+        </button>
+      </div>
+      <div id="back-button-wrapper" class="wrapper" hidden$="[[!_shouldShowBackButton]]">
+        <!-- Back Menu button -->
+        <a href$="[[backButtonHref]]">
+          <slot name="back-button"></slot>
+        </a>
+      </div>
+      <div id="logo-wrapper" class="wrapper" hidden$="[[hideLogo]]">
+        <!-- Logo button -->
+        <a href$="[[logoHref]]">
+          <slot name="app-button"></slot>
+        </a>
+      </div>
+    </app-toolbar>
+
+  </template>
+
+  <script>
+    (function(NAMIRIAL) {
+      'use strict';
+
+      Polymer({
+
+        is: 'namirial-toolbar',
+
+        behaviors: [
+          NAMIRIAL.LocalizeBehavior
+        ],
+
+        properties: {
+          /**
+           * Href set to back button
+           */
+          backButtonHref: {
+            type: String,
+            value: '/'
+          },
+          /**
+           * Href set to logo
+           */
+          logoHref: {
+            type: String,
+            value: '/'
+          },
+          /**
+           * Specify if logo should be shown
+           */
+          hideLogo: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * Specify if menu button should be shown
+           */
+          showMenuButton: {
+            type: Boolean,
+            value: true
+          },
+          /**
+           * Computed property that pilot menu button visibility. It depends on
+           *  backButton visibiliy and showMenuButton public property
+           */ 
+          _shouldShowMenuButton: {
+            type: Boolean,
+            computed: '_computeShouldShowMenuButton(_shouldShowBackButton, showMenuButton)'
+          },
+          /**
+           * Computed property that pilot back button visibility. It depends on
+           * backButtonHref property.
+           */
+          _shouldShowBackButton: {
+            type: Boolean,
+            computed: '_computeShouldShowBackButton(backButtonHref)'
+          }
+        },
+        /**
+         * Handler function for menu button tap
+         */
+        _onMenuButtonTap: function(e) {
+          this.dispatchEvent(new CustomEvent('toggle-drawer', e.detail), {bubbles: true});
+        },
+        /**
+         * Compute menu button visibility property
+         */
+        _computeShouldShowMenuButton: function(shouldShowBackButton, showMenuButton) {
+          return !shouldShowBackButton && showMenuButton;
+        },
+        /**
+         * Compute back button visibility property
+         */
+        _computeShouldShowBackButton: function(backButtonHref) {
+          if (backButtonHref) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      });
+
+    }(window.NAMIRIAL));
+  </script>
+
+</dom-module>
